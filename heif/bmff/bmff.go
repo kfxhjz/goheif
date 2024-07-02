@@ -32,7 +32,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strings"
 )
 
@@ -65,7 +64,7 @@ func (t BoxType) EqualString(s string) bool {
 	return len(s) == 4 && s[0] == t[0] && s[1] == t[1] && s[2] == t[2] && s[3] == t[3]
 }
 
-type parseFunc func(b box, br *bufio.Reader) (Box, error)
+// type parseFunc func(b box, br *bufio.Reader) (Box, error)
 
 // Box represents a BMFF box.
 type Box interface {
@@ -173,7 +172,7 @@ func (r *Reader) ReadBox() (Box, error) {
 		return nil, io.EOF
 	}
 	if r.lastBox != nil {
-		if _, err := io.Copy(ioutil.Discard, r.lastBox.Body()); err != nil {
+		if _, err := io.Copy(io.Discard, r.lastBox.Body()); err != nil {
 			return nil, err
 		}
 	}
@@ -317,7 +316,7 @@ func (br *bufReader) parseAppendBoxes(dst *[]Box) error {
 			br.err = err
 			return err
 		}
-		slurp, err := ioutil.ReadAll(inner.Body())
+		slurp, err := io.ReadAll(inner.Body())
 		if err != nil {
 			br.err = err
 			return err
@@ -354,7 +353,7 @@ func parseItemInfoEntry(outer *box, br *bufReader) (Box, error) {
 	}
 	ie := &ItemInfoEntry{FullBox: fb}
 	if fb.Version != 2 {
-		return nil, fmt.Errorf("TODO: found version %d infe box. Only 2 is supported now.", fb.Version)
+		return nil, fmt.Errorf("TODO: found version %d infe box. Only 2 is supported now", fb.Version)
 	}
 
 	ie.ItemID, _ = br.readUint16()
@@ -910,7 +909,7 @@ func parseItemDataBox(gen *box, br *bufReader) (Box, error) {
 		return nil, err
 	}
 
-	data, err := ioutil.ReadAll(fb.Body())
+	data, err := io.ReadAll(fb.Body())
 	if err != nil {
 		return nil, err
 	}
@@ -1020,8 +1019,8 @@ func parseItemHevcConfigBox(gen *box, br *bufReader) (Box, error) {
 	c.generalProfileCompatibilityFlags, _ = br.readUint32()
 
 	for i := 0; i < 6; i += 1 {
-		//TODO: general_constraint_indicator_flags
-		ch, _ = br.readUint8()
+		// TODO: general_constraint_indicator_flags
+		_, _ = br.readUint8()
 	}
 
 	c.generalLevelIdc, _ = br.readUint8()
