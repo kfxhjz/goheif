@@ -1,6 +1,7 @@
 package libde265
 
-//#cgo CXXFLAGS: -Ilibde265 -I. -std=c++11 -Wno-constant-conversion -msse4.1
+//#cgo 386 amd64 CXXFLAGS: -Ilibde265 -I. -std=c++11 -DHAVE_SSE4_1 -msse4.1
+//#cgo arm arm64 CXXFLAGS: -Ilibde265 -I. -std=c++11 -DHAVE_ARM
 //#cgo CFLAGS: -I.
 // #include <stdint.h>
 // #include <stdlib.h>
@@ -157,7 +158,7 @@ func (dec *Decoder) DecodeImage(data []byte) (image.Image, error) {
 				ycc.Cr = (*[1 << 30]byte)(unsafe.Pointer(cr))[:int(cheight)*int(cstride)]
 			}
 
-			//C.de265_release_next_picture(dec.ctx)
+			// C.de265_release_next_picture(dec.ctx)
 
 			return ycc, nil
 		}
