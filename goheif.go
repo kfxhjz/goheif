@@ -8,8 +8,8 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/jdeng/goheif/heif"
-	"github.com/jdeng/goheif/libde265"
+	"github.com/kfxhjz/goheif/heif"
+	"github.com/kfxhjz/goheif/libde265"
 )
 
 // SafeEncoding uses more memory but seems to make
@@ -180,7 +180,7 @@ func Decode(r io.Reader) (image.Image, error) {
 		}
 	}
 
-	//crop to actual size when applicable
+	// crop to actual size when applicable
 	out.Rect = image.Rectangle{image.Pt(0, 0), image.Pt(width, height)}
 	return out, nil
 }
